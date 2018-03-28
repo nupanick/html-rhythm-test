@@ -5,33 +5,38 @@
   <meta charset="utf-8">
 </head>
 <body>
-  <span id="beatcounter"></span>
+  <span id="beatCounter"></span>
   <script>
 
   const BPM = 120;
-  const crochet = 60000/BPM // timestamps are in milliseconds
+  const beatLength = 60000/BPM; // timestamps are in milliseconds
+  const beatCounter = document.querySelector('#beatCounter');
 
-  window.requestAnimationFrame( function step(timestamp) {
-    // First frame set-up.
-    if (!step.start) {
-      step.start = timestamp;
-      step.last = timestamp;
-      step.nextcrochet = timestamp + crochet;
-      step.beatnumber = 0;
-    }
-    let dt = timestamp - step.laststamp;
-
-    if (timestamp > step.nextcrochet) {
-      step.nextcrochet = step.nextcrochet + crochet;
-      step.beatnumber = step.beatnumber + 1;
+  // Define an animation frame.
+  function update({timestamp, start, nextBeat, beatNumber}) {
+    if (timestamp > nextBeat) {
+      nextBeat = nextBeat + beatLength;
+      beatNumber = beatNumber + 1;
     }
 
-    const beatcounter = document.getElementById('beatcounter');
-    beatcounter.innerHTML = String(step.beatnumber);
+    beatCounter.innerHTML = String(beatNumber);
 
-    laststamp = timestamp;
-    window.requestAnimationFrame(step);
-  });
+    // Every frame must end by queueing the next one!
+    window.requestAnimationFrame(timestamp => update({
+      timestamp,
+      start,
+      nextBeat,
+      beatNumber
+    }));
+  }
+
+  // Queue first frame.
+  window.requestAnimationFrame(timestamp => update({
+    timestamp: timestamp,
+    start: timestamp,
+    nextBeat: timestamp + beatLength,
+    beatNumber: 0
+  }));
 
   </script>
 </body>

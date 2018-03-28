@@ -1,0 +1,38 @@
+<html>
+<head>
+  <title>Rhythm Test</title>
+  <!-- By Nupa, March 2018 -->
+  <meta charset="utf-8">
+</head>
+<body>
+  <span id="beatcounter"></span>
+  <script>
+
+  const BPM = 120;
+  const crochet = 60000/BPM // timestamps are in milliseconds
+
+  window.requestAnimationFrame( function step(timestamp) {
+    // First frame set-up.
+    if (!step.start) {
+      step.start = timestamp;
+      step.last = timestamp;
+      step.nextcrochet = timestamp + crochet;
+      step.beatnumber = 0;
+    }
+    let dt = timestamp - step.laststamp;
+
+    if (timestamp > step.nextcrochet) {
+      step.nextcrochet = step.nextcrochet + crochet;
+      step.beatnumber = step.beatnumber + 1;
+    }
+
+    const beatcounter = document.getElementById('beatcounter');
+    beatcounter.innerHTML = String(step.beatnumber);
+
+    laststamp = timestamp;
+    window.requestAnimationFrame(step);
+  });
+
+  </script>
+</body>
+</html>
